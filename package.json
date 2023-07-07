@@ -3,24 +3,57 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@hookform/resolvers": "^3.1.0",
+    "@mui/lab": "^5.0.0-alpha.99",
+    "@mui/material": "^5.10.17",
+    "@stripe/react-stripe-js": "^1.16.3",
+    "@stripe/stripe-js": "^1.46.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "clsx": "^1.2.1",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^10.12.4",
+    "jszip": "^3.10.1",
+    "postcss": "^8.4.21",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-facebook-login": "^4.1.1",
+    "react-ga": "^3.3.1",
+    "react-google-login": "^5.2.2",
+    "react-grid-layout": "^1.3.4",
+    "react-hook-form": "^7.31.3",
+    "react-icons": "^4.7.1",
+    "react-loading": "^2.0.3",
+    "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-search-field": "^2.0.1",
+    "react-stripe-checkout": "^2.6.3",
+    "sass": "^1.52.2",
+    "states-us": "^1.0.2",
+    "swiper": "^8.4.4",
+    "tailwindcss": "^3.3.1",
+    "web-vitals": "^2.1.4",
+    "wretch": "^2.3.2",
+    "yup": "^1.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "docker-dev": "docker-compose -f docker-compose.local.yml up --build",
+    "local-build": "GENERATE_SOURCEMAP=true react-scripts build",
+    "start-built": "serve -s build",
+    "build": "react-scripts build && compress-cra",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
     ]
   },
   "browserslist": {
@@ -34,5 +67,32 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/eslint-parser": "^7.21.3",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-react": "^7.18.6",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "autoprefixer": "^10.4.14",
+    "compress-create-react-app": "^1.3.1",
+    "eslint": "^8.38.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.8.7",
+    "serve": "^14.2.0",
+    "source-map-explorer": "^2.5.3",
+    "typescript": "^4.9.5",
+    "util": "^0.12.5"
   }
 }
