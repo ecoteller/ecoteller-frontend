@@ -1,8 +1,17 @@
-import { Paper, Typography, TextField, Button } from '@mui/material';
+import { useState, forwardRef } from 'react';
+import { Paper, Typography, TextField, Button, Snackbar } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import _ from 'lodash';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import Countdown from '../../components/Countdown';
+
+const Alert = forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const schema = yup.object().shape({
   email: yup.string().email('You must enter a valid email').required('You must enter a email'),
@@ -19,12 +28,34 @@ function ComingSoon() {
     resolver: yupResolver(schema),
   });
   const { isValid, dirtyFields, errors } = formState;
+  const [snackbarConfig, setSnackbarConfig] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
-  const onSubmit = () => reset(defaultValues);
+  const onSubmit = async ({ email }) => {
+    try {
+      // Save the email field to the Firebase database
+      firebase.database().ref('users').push({ email });
+      setSnackbarConfig({
+        open: true,
+        message: 'Thank you for registering. We will notify you when we launch!',
+        severity: 'success',
+      });
+    } catch (err) {
+      console.log(err);
+      setSnackbarConfig({
+        open: true,
+        message: 'Something went wrong. Please try again later.',
+        severity: 'error',
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto">
-      <Paper className="sm:w-1/3 min-h-full sm:min-h-auto rounded-0 py-32 px-16 sm:p-12 sm:rounded-2xl sm:shadow mx-auto mt-5 mb-20">
+      <Paper className="sm:w-1/2 min-h-full sm:min-h-auto rounded-0 py-32 px-16 sm:p-12 sm:rounded-2xl sm:shadow mx-auto mt-5 mb-20">
         <div className="w-full max-w-320 sm:w-320 mx-auto sm:mx-0">
           <img className="w-32" src="assets/images/logo/ecoteller-logo.png" alt="logo" />
 
@@ -36,7 +67,9 @@ function ComingSoon() {
             the launch!
           </Typography>
 
-          <div className="flex flex-col items-center py-4">ca</div>
+          <div className="flex flex-col items-center py-4">
+            <Countdown endDate="2023-07-30" />
+          </div>
 
           <form
             name="comingSoonForm"
@@ -80,6 +113,13 @@ function ComingSoon() {
           </form>
         </div>
       </Paper>
+      <Snackbar
+        open={snackbarConfig.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarConfig({ ...snackbarConfig, open: false })}
+      >
+        <Alert severity={snackbarConfig.severity}>{snackbarConfig.message}</Alert>
+      </Snackbar>
     </div>
   );
 }
