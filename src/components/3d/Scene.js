@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 function Scene(props) {
   const containerRef = useRef(null) || props.containerRef;
   const canvasRef = useRef(null);
+  const [plantReady, setPlantReady] = useState(false);
+  const [plateReady, setPlateReady] = useState(false);
 
   const loader = new FBXLoader();
 
@@ -21,29 +23,17 @@ function Scene(props) {
     renderer.setClearColor(0x000000, 0);
     renderer.shadowMap.enabled = true;
 
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('assets/images/logo/ecoteller-logo.png');
-
-    // Create geometries, materials, and meshes
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({ map: texture });
-
-    const cube = new THREE.Mesh(geometry, material);
-    cube.scale.set(1, 1, 1);
-    cube.castShadow = true;
-    // scene.add(cube);
-
     loader.load(
       'assets/3d/plate/plate.fbx',
       (plate) => {
         plate.scale.set(0.05, 0.05, 0.05);
         plate.rotateX(THREE.MathUtils.degToRad(30));
         plate.position.set(0, 0, 0);
-        // scene.add(plate);
+        scene.add(plate);
 
         const animate = () => {
-          // plate.rotation.x += 0.01;
-          // plate.rotation.z += 0.01;
+          plate.rotation.x += 0.001;
+          plate.rotation.z += 0.001;
 
           renderer.render(scene, camera);
           requestAnimationFrame(animate);
@@ -52,8 +42,9 @@ function Scene(props) {
         animate();
       },
       (xhr) => {
-        // Progress callback
-        console.log((xhr.loaded / xhr.total) * 100, '% loaded');
+        if (xhr.loaded / xhr.total === 1) {
+          setPlateReady(true);
+        }
       },
       (error) => {
         // Error callback
@@ -64,7 +55,6 @@ function Scene(props) {
     loader.load(
       'assets/3d/plant/plant.fbx',
       (plant) => {
-
         plant.traverse((child) => {
           if (child.isMesh) {
             if (child.name === 'Circle003' || child.name === 'Circle015') {
@@ -86,8 +76,9 @@ function Scene(props) {
         animate();
       },
       (xhr) => {
-        // Progress callback
-        console.log((xhr.loaded / xhr.total) * 100, '% loaded');
+        if (xhr.loaded / xhr.total === 1) {
+          setPlantReady(true);
+        }
       },
       (error) => {
         // Error callback
@@ -108,24 +99,17 @@ function Scene(props) {
     directionalLight.shadow.camera.far = 25;
     scene.add(directionalLight);
 
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Update object positions, rotations, or any other animations here
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
     // Cleanup function
     return () => {
       renderer.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    if (plantReady && plateReady) {
+      console.log('ready');
+    }
+  }, [plantReady, plateReady]);
 
   return (
     <div ref={containerRef}>
