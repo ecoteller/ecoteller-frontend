@@ -5,12 +5,15 @@ import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import _ from 'lodash';
-import firebase from 'firebase/app';
-import 'firebase/database';
-import Countdown from '../../components/Countdown';
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, query, orderByChild, equalTo, get, push } from 'firebase/database';
 
-const Alert = forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// import 'firebase/database';
+import Countdown from '../../components/Countdown';
+import firebaseConfig from '../../config/firebase.config';
+
+const Alert = forwardRef(function Alert(props, currentRef) {
+  return <MuiAlert elevation={6} ref={currentRef} variant="filled" {...props} />;
 });
 
 const schema = yup.object().shape({
@@ -22,6 +25,8 @@ const defaultValues = {
 };
 
 function ComingSoon() {
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
   const { control, formState, handleSubmit, reset } = useForm({
     mode: 'onChange',
     defaultValues,
@@ -36,8 +41,18 @@ function ComingSoon() {
 
   const onSubmit = async ({ email }) => {
     try {
-      // Save the email field to the Firebase database
-      firebase.database().ref('users').push({ email });
+      // Check if the email already exists in the database
+      // Check if the email already exists in the database
+      const emailRef = ref(database, 'users');
+      const emailQuery = query(emailRef, orderByChild('email'), equalTo(email));
+      const snapshot = await get(emailQuery);
+
+      if (!snapshot.exists()) {
+        // Save the email field to the Firebase database
+        await push(ref(database, 'users'), {
+          email,
+        });
+      }
       setSnackbarConfig({
         open: true,
         message: 'Thank you for registering. We will notify you when we launch!',
@@ -60,11 +75,11 @@ function ComingSoon() {
           <img className="w-32" src="assets/images/logo/ecoteller-logo.png" alt="logo" />
 
           <Typography className="mt-12 text-2xl font-extrabold tracking-tight leading-tight">
-            Almost there!
+            We are launching Ecoteller.
           </Typography>
           <Typography variant="body1" className="mt-2">
-            Do you want to be notified when we are ready? Register below so we can notify you about
-            the launch!
+            Use your plate and plant it ! Do you want to be notified when we are ready? Register
+            below so we can notify you about the launch!
           </Typography>
 
           <div className="flex flex-col items-center py-4">
