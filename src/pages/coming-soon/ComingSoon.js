@@ -83,7 +83,7 @@ function ComingSoon() {
           </Typography>
 
           <div className="flex flex-col items-center py-4">
-            <Countdown endDate="2023-07-30" />
+            <Countdown endDate="2023-10-01" />
           </div>
 
           <form

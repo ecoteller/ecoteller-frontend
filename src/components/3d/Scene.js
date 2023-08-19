@@ -18,7 +18,10 @@ function Scene(props) {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 0.1, 1000);
     camera.position.z = 5;
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      alpha: true,
+    });
     renderer.setSize(containerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.shadowMap.enabled = true;
@@ -65,7 +68,7 @@ function Scene(props) {
 
         plant.scale.set(0.03, 0.03, 0.03);
         plant.position.set(0, -3, 0);
-        scene.add(plant);
+        // scene.add(plant);
 
         const animate = () => {
           plant.rotation.y += 0.01;
